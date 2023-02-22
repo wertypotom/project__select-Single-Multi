@@ -18,6 +18,9 @@
 
 .value {
     flex-grow: 1;
+    display: flex;
+    gap: 0.5em;
+    flex-wrap: wrap;
 }
 
 .closeBtn {
@@ -53,8 +56,6 @@
     margin: 0;
     padding: 0;
     list-style: none;
-    /* display: none; */
-
     max-height: 60em;
     overflow-y: auto;
     border: 0.05em solid #777;
@@ -67,20 +68,37 @@
     z-index: 100;
 }
 
-.options.show {
-    display: block;
-}
-
 .option {
     padding: 0.25em 0.5em;
     cursor: pointer;
 }
 
-.option.highlighted {
+.option.selected {
+    background-color: hsl(200, 100%, 70%);
+}
+
+.option.hovered {
     background-color: hsl(200, 100%, 50%);
     color: white;
 }
 
-.option.highlighted {
-    background-color: hsl(200, 100%, 70%);
+.optionBadge {
+    display: flex;
+    align-items: center;
+    border: 0.05em solid #777;
+    gap: 0.25em;
+    border-radius: 0.25em;
+    padding: 0.15em 0.25em;
+    cursor: pointer;
+    background: none;
+    outline: none;
+}
+
+.optionBadge:hover {
+    background-color: hsl(0, 100%, 90%);
+    border-color: hsl(0, 100%, 50%);
+}
+
+.optionBadge:hover > .closeBtn {
+    color: hsl(0, 100%, 50%);
 }
