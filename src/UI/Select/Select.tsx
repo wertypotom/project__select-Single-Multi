@@ -1,4 +1,4 @@
-import { useState, MouseEvent, useEffect } from "react";
+import { useState, MouseEvent, useEffect, useRef } from "react";
 import { SelectOptions } from "../../types/TSelect";
 import style from "./Select.module.css";
 
@@ -21,10 +21,56 @@ type Props = {
 const Select = ({ multiple, onChange, options, value }: Props) => {
     const [isOpen, setIsOpen] = useState(false);
     const [hoverIndex, setHoverIndex] = useState(0);
+    const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (!isOpen) setHoverIndex(0);
     }, [isOpen]);
+
+    useEffect(() => {
+        const handler = (event: KeyboardEvent) => {
+            if (event.target !== containerRef.current) return;
+
+            if (event.code === "Space") {
+                setIsOpen(!isOpen);
+            }
+
+            if (event.code === "Escape") {
+                setIsOpen(false);
+            }
+
+            if (event.code === "Enter") {
+                const option = options[hoverIndex];
+
+                if (multiple) {
+                    if (!value.includes(option)) {
+                        onChange([...value, option]);
+                    }
+                } else {
+                    onChange(option);
+                    setIsOpen(false);
+                }
+            }
+
+            if (event.code === "ArrowDown") {
+                if (hoverIndex < options.length - 1) {
+                    setHoverIndex((prev) => prev + 1);
+                }
+            }
+
+            if (event.code === "ArrowUp") {
+                if (hoverIndex > 0) {
+                    setHoverIndex((prev) => prev - 1);
+                }
+            }
+        };
+
+        containerRef.current?.addEventListener("keydown", handler);
+
+        return () => {
+            containerRef.current?.removeEventListener("keydown", handler);
+        };
+    }, [isOpen, hoverIndex]);
 
     const clearOptions = (e: MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
@@ -77,6 +123,7 @@ const Select = ({ multiple, onChange, options, value }: Props) => {
 
     return (
         <div
+            ref={containerRef}
             onBlur={() => setIsOpen(false)}
             onClick={() => setIsOpen(!isOpen)}
             tabIndex={0}
